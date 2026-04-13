@@ -1,0 +1,19 @@
+{
+  "branch": null,
+  "claimed_by": null,
+  "closed_at": null,
+  "closed_children": [],
+  "created_at": "2026-04-13T20:49:00.176999316Z",
+  "depends_on": [],
+  "description": "Wire the spec's delivery-link feature: task files carry a delivered_in field pointing at the squash commit on main. Ground truth is the [bl-xxxx] tag embedded in the commit message, discoverable via git log --grep. The SHA is a performance hint; on read, balls verifies the SHA still exists and still contains the tag, and re-resolves via tag scan if not. Handles rebase/amend/filter-branch gracefully. Bl show <id> gains the ability to display and open the delivering commit. Bl review writes the hint when the squash commit lands. Tests: rebase then show still resolves; deleted SHA re-resolves via tag; task never reviewed has no delivery link. Reference docs/SPEC-orphan-branch-state.md §6. Depends on topology task being merged (it is).",
+  "external": {},
+  "id": "bl-fc72",
+  "links": [],
+  "parent": null,
+  "priority": 2,
+  "status": "open",
+  "tags": ["architecture"],
+  "title": "SPEC §6: delivery-tag resolution + self-healing SHA cache",
+  "type": "task",
+  "updated_at": "2026-04-13T20:49:00.176999316Z"
+}

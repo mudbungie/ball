@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-f998",
+  "claimed_by": "mark",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-13T23:20:04.091582058Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["ci"],
   "title": "Add job timeout-minutes to CI workflow",
   "type": "task",
-  "updated_at": "2026-04-13T23:20:04.091582058Z"
+  "updated_at": "2026-04-13T23:20:07.004065926Z"
 }

@@ -1,0 +1,20 @@
+{
+  "branch": null,
+  "claimed_by": null,
+  "closed_at": null,
+  "closed_children": [],
+  "created_at": "2026-04-13T23:28:31.122257763Z",
+  "delivered_in": null,
+  "depends_on": [],
+  "description": "tests/create_list.rs:105 asserts that 'bl list --status blocked' output does not contain the substring 'bb'. The test creates two tasks with titles 'aa' and 'bb'. The blocked-list output includes the 'aa' task's auto-generated 4-hex ID (bl-XXXX). Roughly 1/256 IDs contain the substring 'bb' (e.g. bl-bbXX, bl-Xbb0), causing intermittent failures. Same risk for 'aa'. Fix: use task titles that can't appear in 4-hex IDs (e.g. 'task-one'/'task-two'), or filter the output to lines that don't start with the ID column. Reproduced 2026-04-13 during a make check run on bl-5650's pre-commit hook.",
+  "external": {},
+  "id": "bl-b993",
+  "links": [],
+  "parent": null,
+  "priority": 3,
+  "status": "open",
+  "tags": ["tests"],
+  "title": "Flaky test: story_11_list_filtered_by_status",
+  "type": "bug",
+  "updated_at": "2026-04-13T23:28:31.122257763Z"
+}

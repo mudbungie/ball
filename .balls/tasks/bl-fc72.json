@@ -11,9 +11,9 @@
   "links": [],
   "parent": null,
   "priority": 2,
-  "status": "in_progress",
+  "status": "review",
   "tags": ["architecture"],
   "title": "SPEC §6: delivery-tag resolution + self-healing SHA cache",
   "type": "task",
-  "updated_at": "2026-04-13T21:26:25.460869063Z"
+  "updated_at": "2026-04-13T21:34:24.463392795Z"
 }

@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-c97d",
+  "claimed_by": "mark",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-14T06:52:55.123884280Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["gates","0.3.0"],
   "title": "Add gates link type for post-review subtask blocking",
   "type": "epic",
-  "updated_at": "2026-04-14T06:52:55.123884280Z"
+  "updated_at": "2026-04-14T06:55:17.438002955Z"
 }

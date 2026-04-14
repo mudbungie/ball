@@ -1,0 +1,20 @@
+{
+  "branch": null,
+  "claimed_by": null,
+  "closed_at": null,
+  "closed_children": [],
+  "created_at": "2026-04-14T06:53:17.102443269Z",
+  "delivered_in": null,
+  "depends_on": ["bl-c97d"],
+  "description": "Test coverage review for the gates feature (parent: bl-c97d). Repo policy is 100% line coverage.\n\nRequired cases:\n- LinkType::Gates round-trips through serialize/deserialize.\n- LinkType::Unknown(String) round-trips and preserves the original string.\n- Older-format task file (no 'gates' links) still parses unchanged.\n- 'bl close PARENT' rejects when at least one gates-linked child is still open.\n- 'bl close PARENT' succeeds once all gates-linked children are closed.\n- 'bl close CHILD' on a gate child works normally (gate semantics only apply to the parent).\n- 'bl link add P gates C' creates the link; 'bl link rm' removes it.\n- Mixed: a task with both dep and gates links resolves correctly in 'bl dep tree'.\n- 'bl ready' does not surface gate children as ready until parent is closed (or document the chosen behavior — gates are about close, not claim, so this needs an explicit decision).",
+  "external": {},
+  "id": "bl-8e5f",
+  "links": [],
+  "parent": "bl-c97d",
+  "priority": 2,
+  "status": "open",
+  "tags": ["gates","tests"],
+  "title": "Test coverage review: gates feature",
+  "type": "task",
+  "updated_at": "2026-04-14T06:53:17.102443269Z"
+}

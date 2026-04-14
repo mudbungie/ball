@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-456b",
+  "claimed_by": "mark",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-14T00:52:33.220723445Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 1,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["ci","release"],
   "title": "release-plz workflow: drop invalid command input",
   "type": "bug",
-  "updated_at": "2026-04-14T00:52:33.220723445Z"
+  "updated_at": "2026-04-14T00:52:36.314321182Z"
 }

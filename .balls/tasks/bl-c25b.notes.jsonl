@@ -1,1 +1,0 @@
-{"ts":"2026-04-14T06:29:16.362312023Z","author":"mark","text":"SKILL.md: add bl create row to commands table\n\nThe 'Creating Tasks' section at line 127 documented bl create, but the\ncommands table didn't list it, so agents scanning the table missed it.\nAdd a row pointing to the section."}

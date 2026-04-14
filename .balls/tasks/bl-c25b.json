@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-c25b",
+  "claimed_by": "mark",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-14T06:26:45.685232176Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 3,
-  "status": "open",
+  "status": "in_progress",
   "tags": [],
   "title": "SKILL.md: document bl create for agents",
   "type": "task",
-  "updated_at": "2026-04-14T06:26:45.685232176Z"
+  "updated_at": "2026-04-14T06:26:47.731505777Z"
 }

@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-00ef",
+  "claimed_by": "mark",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-14T06:53:01.888402579Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": "bl-c97d",
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["gates","audit"],
   "title": "Security audit: gates link type",
   "type": "task",
-  "updated_at": "2026-04-14T06:53:01.888402579Z"
+  "updated_at": "2026-04-14T07:44:01.654273801Z"
 }

@@ -1,0 +1,20 @@
+{
+  "branch": null,
+  "claimed_by": null,
+  "closed_at": null,
+  "closed_children": [],
+  "created_at": "2026-04-15T01:56:50.144161471Z",
+  "delivered_in": null,
+  "depends_on": [],
+  "description": "Config.version (src/config.rs:18) is required in the on-disk schema but never read. It's a trap: it looks like a migration knob but does nothing. Two options: (a) use it - Config::load rejects versions greater than the current schema with a helpful 'your bl is too old' error, and documents the bump protocol; or (b) drop the field entirely with a serde default for back-compat so existing configs still load. Pick (a) since this audit is about forward-proofing, not deleting future-proofing knobs. Add a SCHEMA_VERSION const in config.rs, compare on load, fail with BallError::Other on mismatch (too-new only; too-old = our struct still parses it).",
+  "external": {},
+  "id": "bl-2da0",
+  "links": [],
+  "parent": null,
+  "priority": 3,
+  "status": "open",
+  "tags": [],
+  "title": "Wire up or remove Config.version",
+  "type": "task",
+  "updated_at": "2026-04-15T01:56:50.144161471Z"
+}

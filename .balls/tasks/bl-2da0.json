@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-2da0",
+  "claimed_by": "mark",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-15T01:56:50.144161471Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 3,
-  "status": "open",
+  "status": "in_progress",
   "tags": [],
   "title": "Wire up or remove Config.version",
   "type": "task",
-  "updated_at": "2026-04-15T01:56:50.144161471Z"
+  "updated_at": "2026-04-15T02:17:58.545689732Z"
 }

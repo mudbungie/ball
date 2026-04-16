@@ -1,0 +1,20 @@
+{
+  "branch": null,
+  "claimed_by": null,
+  "closed_at": null,
+  "closed_children": [],
+  "created_at": "2026-04-16T20:08:02.056077974Z",
+  "delivered_in": null,
+  "depends_on": [],
+  "description": "Gate on epic bl-a847. Not meant to close before the epic — gates link, not a dep.\n\nUpdate README.md:\n- Replace any example output blocks that show [P3] bl-xxxx status ... with the new grouped/glyphed format.\n- Add a short 'CLI look and feel' section explaining: glyphs + words, priority dots, claimed/deps/gates badges, tree rendering for bl dep tree, epic progress bars.\n- Document --plain, and the NO_COLOR / CLICOLOR / isatty detection order.\n- Note that --json output is unchanged (machine contract).\n\nUpdate SKILL.md:\n- Don't lean on glyph-only understanding (agents parse text). Keep the prose skill-facing, and add a one-line note that bl supports --plain for stable output when scraping human output is unavoidable (but --json is still the supported contract).\n\nUpdate clap help strings:\n- Any --help output showing example formats.\n- Add --plain to the top-level Cli.\n\nAcceptance:\n- README examples render correctly copy-pasted from a real terminal run.\n- SKILL.md parseable contract unchanged.\n- bl --help mentions --plain.",
+  "external": {},
+  "id": "bl-1eb8",
+  "links": [],
+  "parent": "bl-a847",
+  "priority": 3,
+  "status": "open",
+  "tags": ["display","docs"],
+  "title": "Docs update for CLI display overhaul: README, SKILL.md, help strings",
+  "type": "task",
+  "updated_at": "2026-04-16T20:08:02.056077974Z"
+}

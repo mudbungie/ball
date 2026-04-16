@@ -2,7 +2,7 @@
   "branch": null,
   "claimed_by": null,
   "closed_at": null,
-  "closed_children": [],
+  "closed_children": [{"closed_at":"2026-04-16T20:21:27.262094703Z","id":"bl-c784","title":"display.rs module: color detection, glyphs, tree primitives"}],
   "created_at": "2026-04-16T20:07:41.737825788Z",
   "delivered_in": null,
   "depends_on": [],
@@ -16,5 +16,5 @@
   "tags": ["display","polish"],
   "title": "CLI display overhaul: colors, glyphs, real trees, polished output",
   "type": "epic",
-  "updated_at": "2026-04-16T20:08:02.104131304Z"
+  "updated_at": "2026-04-16T20:21:27.608923011Z"
 }

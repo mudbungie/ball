@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-c784",
+  "claimed_by": "claude",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-16T20:07:41.758670599Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": "bl-a847",
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["display"],
   "title": "display.rs module: color detection, glyphs, tree primitives",
   "type": "task",
-  "updated_at": "2026-04-16T20:07:41.758670599Z"
+  "updated_at": "2026-04-16T20:09:19.495626565Z"
 }

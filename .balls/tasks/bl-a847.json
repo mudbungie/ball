@@ -9,12 +9,12 @@
   "description": "Today bl list / bl ready / bl show / bl dep tree are plain-text, uncolored, and bl dep tree is misnamed — it's a flat list, not a tree. Beads feels more polished in comparison. This epic is the overhaul.\n\nDesign anchors:\n- Glyphs are scannable anchors; status words always render alongside them (not a replacement). Users shouldn't have to memorize icons.\n- Colors are additive, never load-bearing. Respect NO_COLOR, CLICOLOR=0, and non-TTY stdout. --plain forces unstyled regardless of terminal.\n- Machine contract unchanged: --json output is byte-identical to today.\n\nVisual spec:\n\nStatus glyphs (always paired with words; Unicode default, ASCII fallback on non-TTY/NO_COLOR/--plain):\n  open         ○  dim       ([ ])\n  in_progress  »  yellow    ([>])\n  review       ?  cyan      ([?])\n  blocked      ⌀  magenta   ([!])\n  closed       ✓  green     ([x])\n  deferred     ~  dim gray  ([-])\n\nPriority dot replaces [P3] prefix: ● red/yellow/blue/dim for 1/2/3/4.\n\nID badges (after the id, before the title):\n  ★ claimed by you (matches BALLS_IDENTITY)\n  ◆ has unmet deps\n  ⛓ has open gates links\n\nColumn layout for list/ready:\n  ● » in_progress   bl-5678 ★ Swap middleware                    api, auth\n\nLibrary: owo-colors (pure, no deps) or anstream (Windows-aware). Pick one in the first child ball.\n\nDependencies:\n- bl-91e0 (display module) is prerequisite for all the others.\n- The consumer balls (list, ready, show, dep tree, progress bars) can go in any order once the module lands.\n\nForward-compat:\n- Output format is human-facing; no on-disk changes. Nothing to round-trip.\n- --json paths are not touched.",
   "external": {},
   "id": "bl-a847",
-  "links": [{"link_type":"gates","target":"bl-1eb8"}],
+  "links": [{"link_type":"gates","target":"bl-1eb8"},{"link_type":"gates","target":"bl-ab8d"}],
   "parent": null,
   "priority": 2,
   "status": "open",
   "tags": ["display","polish"],
   "title": "CLI display overhaul: colors, glyphs, real trees, polished output",
   "type": "epic",
-  "updated_at": "2026-04-16T20:08:02.092355086Z"
+  "updated_at": "2026-04-16T20:08:02.104131304Z"
 }

@@ -1,0 +1,20 @@
+{
+  "branch": null,
+  "claimed_by": null,
+  "closed_at": null,
+  "closed_children": [],
+  "created_at": "2026-04-16T06:14:33.476040179Z",
+  "delivered_in": null,
+  "depends_on": [],
+  "description": "Add --tasks-dir <PATH> to bl init. When given, balls stores tasks at the user-specified absolute path instead of the auto-generated ~/.local/share/balls/<hash>/tasks/. Implies --stealth since external paths are not git-tracked. Enables project integrations where multiple repos or tools need tasks at a predictable location.\n\nDeliverables: CLI flag, Store::init plumbing, validation, tests, README update. Also audit config.rs tasks_dir field for dead code.",
+  "external": {},
+  "id": "bl-67ba",
+  "links": [],
+  "parent": null,
+  "priority": 2,
+  "status": "open",
+  "tags": ["stealth"],
+  "title": "Custom tasks-dir for stealth mode",
+  "type": "task",
+  "updated_at": "2026-04-16T06:14:33.476040179Z"
+}

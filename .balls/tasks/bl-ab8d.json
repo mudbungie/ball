@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-ab8d",
+  "claimed_by": "claude-opus",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-16T20:08:02.076410079Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": "bl-a847",
   "priority": 3,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["display","tests"],
   "title": "Test coverage gate for CLI display overhaul",
   "type": "task",
-  "updated_at": "2026-04-16T20:08:02.076410079Z"
+  "updated_at": "2026-04-18T20:00:41.315286472Z"
 }

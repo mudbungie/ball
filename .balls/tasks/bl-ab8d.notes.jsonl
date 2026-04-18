@@ -1,0 +1,1 @@
+{"ts":"2026-04-18T20:04:00.988144445Z","author":"mark","text":"tests: visual smoke test for the CLI display overhaul\n\nIntegration test locks in the bl list / ready / show / dep tree\nvisual contract across the four commands touched by bl-a847. 100%\ncoverage on display.rs and every consumer file confirmed by\ntarpaulin; all existing tests pass; JSON contract unchanged."}

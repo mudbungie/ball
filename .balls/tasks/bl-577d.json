@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-577d",
+  "claimed_by": "claude-opus",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-16T20:07:41.816572229Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": "bl-a847",
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["display"],
   "title": "bl dep tree: actual tree rendering with box-drawing",
   "type": "task",
-  "updated_at": "2026-04-16T20:07:41.816572229Z"
+  "updated_at": "2026-04-18T19:12:11.831538498Z"
 }

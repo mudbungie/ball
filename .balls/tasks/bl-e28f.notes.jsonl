@@ -1,1 +1,0 @@
-{"ts":"2026-04-23T02:09:09.865187040Z","author":"mark","text":"Makefile: install `balls` symlink alongside `bl`\n\nBoth names now resolve to the same binary so the tool is callable\nas either `bl` (short) or `balls` (full name). The symlink is\nrelative so it survives a moved BIN_DIR, and `make uninstall`\nremoves both."}

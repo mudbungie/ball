@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-e446",
+  "claimed_by": "mark",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-23T01:29:07.644526434Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": [],
   "title": "repair: retract stale half-push warnings",
   "type": "task",
-  "updated_at": "2026-04-23T01:29:07.644526434Z"
+  "updated_at": "2026-04-23T01:29:10.872574415Z"
 }

@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-368a",
+  "claimed_by": "claude",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-16T17:30:47.166558924Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 3,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["ids","forward-compat"],
   "title": "Hierarchical sub-task IDs (bl-a3f8.1.1) alongside hash IDs",
   "type": "task",
-  "updated_at": "2026-04-16T17:30:47.166558924Z"
+  "updated_at": "2026-04-23T02:17:05.399728801Z"
 }

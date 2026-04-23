@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-091d",
+  "claimed_by": "claude",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-16T19:29:04.406543478Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 3,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["types","forward-compat"],
   "title": "Open-ended task types with optional per-repo declared vocabulary",
   "type": "task",
-  "updated_at": "2026-04-16T19:29:04.406543478Z"
+  "updated_at": "2026-04-23T04:35:08.724606006Z"
 }

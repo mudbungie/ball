@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-dfa6",
+  "claimed_by": "claude",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-16T20:41:45.093925927Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 3,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["docs","gates"],
   "title": "SKILL.md: guide agents to not tackle gates until parent is in review",
   "type": "task",
-  "updated_at": "2026-04-16T20:41:45.093925927Z"
+  "updated_at": "2026-04-23T02:10:29.238716374Z"
 }

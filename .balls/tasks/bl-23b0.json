@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-23b0",
+  "claimed_by": "opus",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-23T04:58:37.079225330Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 1,
-  "status": "open",
+  "status": "in_progress",
   "tags": [],
   "title": "warn at prime when main has advanced since claim",
   "type": "task",
-  "updated_at": "2026-04-23T04:58:37.079225330Z"
+  "updated_at": "2026-04-23T04:58:40.843950075Z"
 }

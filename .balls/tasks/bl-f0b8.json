@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-f0b8",
+  "claimed_by": "opus",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-25T02:03:04.346285530Z",
@@ -12,9 +12,9 @@
   "links": [{"link_type":"relates_to","target":"bl-59fd"}],
   "parent": null,
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": [],
   "title": "prime --json: 'sync complete' leaks to stdout",
   "type": "bug",
-  "updated_at": "2026-04-25T02:03:13.939790560Z"
+  "updated_at": "2026-04-25T02:05:28.310750304Z"
 }

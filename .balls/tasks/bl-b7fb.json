@@ -1,0 +1,20 @@
+{
+  "branch": null,
+  "claimed_by": null,
+  "closed_at": null,
+  "closed_children": [],
+  "created_at": "2026-04-25T22:09:23.880119095Z",
+  "delivered_in": null,
+  "depends_on": [],
+  "description": "# Philosophy\n\nbl-2148 established that sync is a participant in the lifecycle, not a side-effect of it. The state-branch push to git remote isn't \"claim, then push\" — it's \"claim, where the operation includes negotiating with peers, and the negotiation outcome can fail the operation.\" That's why the retry-on-reject loop makes sense: the lifecycle event itself is conditional on the negotiation.\n\nExternal-system sync (Jira, Linear, GitHub Issues) is the same shape with a different protocol on the wire. A ball closed in git with the Jira ticket left open isn't a conflict — it's two systems with non-overlapping ontologies, where the merge function says \"balls owns these fields, Jira owns those, and these overlap with a tiebreaker.\" That's the same primitive resolve_conflict() is already running for state-branch CAS, just with a different field map.\n\nThis epic re-frames plugins from \"side-effect dispatchers fired after lifecycle transitions\" into \"remote participants in lifecycle negotiations.\" The git origin remote is one participant; each plugin is another. They run through the same primitive, share the same conflict-resolution machinery, follow the same config-inheritance layering bl-2148 introduced, and adopt the same fail-hard-or-graceful policy.\n\n## Why this shape\n\n1. One negotiation primitive, many protocols. Today there are two parallel subsystems: state-branch sync (push, detect non-FF, fetch, resolve_conflict, retry) and the plugin dispatch loop (fire-and-forget push, swallow errors, no retry, no conflict handling). Both are doing the same job. Collapsing them eliminates duplicated logic and gives plugins the conflict-resolution machinery they currently have to reinvent.\n\n2. Soft policy, hard primitives. bl-2148 was explicit: tools shouldn't fight users. The participant model gives the operator the controls (which participants subscribe to which events, which are required, which gate human approval) without the system enforcing anything against the user. A dev who sets --no-sync against a repo that requests synced participants can still ship; that is fine.\n\n3. Different ontologies are not conflicts. A plugin declares its field projection — what subset of Task it owns authoritatively, what it merely reads. The merge operates over the projected overlap, not the whole task. \"Closed in git, open in Jira\" trivially merges because the closed-in-git status doesn't intersect a Jira plugin's projection.\n\n## Roadmap (children below)\n\nSPEC, forward-compat Task deserializer (urgent — bl-2148 just made cross-machine state-branch propagation real), negotiation primitive, participant contract + git-remote reference impl, backward-compat shim for legacy plugins, config inheritance for per-event policy, review/close lifecycle hooks (bl-2148 follow-up generalized), native participant protocol, human-gate participant.\n\n## Backward compat\n\nNo existing plugin or .balls/config.json changes behavior on upgrade. New capabilities are opt-in via optional config fields and optional plugin subcommands. The legacy push/sync contract is preserved via a shim. The unification is invisible to anyone who does not opt in.",
+  "external": {},
+  "id": "bl-b7fb",
+  "links": [],
+  "parent": null,
+  "priority": 2,
+  "status": "open",
+  "tags": ["plugins","sync","lifecycle"],
+  "title": "Unify lifecycle sync: plugins as participants",
+  "type": "epic",
+  "updated_at": "2026-04-25T22:09:23.880119095Z"
+}

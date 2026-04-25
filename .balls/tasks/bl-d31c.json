@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-d31c",
+  "claimed_by": "opus",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-25T22:09:50.814682578Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": "bl-b7fb",
   "priority": 1,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["compat","sync"],
   "title": "Forward-compat Task deserializer with extra-field catch-all",
   "type": "task",
-  "updated_at": "2026-04-25T22:09:50.814682578Z"
+  "updated_at": "2026-04-25T22:33:36.858438728Z"
 }

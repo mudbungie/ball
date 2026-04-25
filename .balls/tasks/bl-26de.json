@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-26de",
+  "claimed_by": "sable",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-25T22:09:50.791204944Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": "bl-b7fb",
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["spec","plugins"],
   "title": "SPEC: lifecycle-sync participant model",
   "type": "task",
-  "updated_at": "2026-04-25T22:20:17.572422455Z"
+  "updated_at": "2026-04-25T22:22:36.479797103Z"
 }

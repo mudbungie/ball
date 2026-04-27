@@ -1,6 +1,6 @@
 {
-  "branch": null,
-  "claimed_by": null,
+  "branch": "work/bl-3088",
+  "claimed_by": "opus-claude",
   "closed_at": null,
   "closed_children": [],
   "created_at": "2026-04-27T20:20:31.443953747Z",
@@ -12,9 +12,9 @@
   "links": [],
   "parent": null,
   "priority": 2,
-  "status": "open",
+  "status": "in_progress",
   "tags": ["skill","docs"],
   "title": "Tighten SKILL.md philosophy: worktree-or-bust on the operating branch",
   "type": "task",
-  "updated_at": "2026-04-27T20:20:31.443953747Z"
+  "updated_at": "2026-04-27T20:20:33.745422256Z"
 }

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.12](https://github.com/mudbungie/balls/compare/v0.5.11...v0.5.12) - 2026-09-06
+
+### Changes
+
+- bl answers no --version and has no reconciler, so a box cannot ask whether its balls binary is stale: ship --version and a make deploy-local timer like the rest of the suite [bl-4316]
+- bl-3616 amendment: the store is never single-writer — reconcile is a rebase of local seals, one mechanism for per-op reject and deferred publication [bl-22c5]
+- Store tiers: publication is a verb, tier boundaries are plugins, pointers are tags — dissolve fail-closed sync into schedule wiring [bl-3616]
+
 ## [0.5.11](https://github.com/mudbungie/balls/compare/v0.5.10...v0.5.11) - 2026-08-14
 
 ### Changes

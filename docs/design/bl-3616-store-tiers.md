@@ -12,6 +12,16 @@ various obnoxiousness levels, explicit opt-in sync. This document states the
 maximally-subtracted design first and asks the maintainer to argue it up. §6 is
 the part that is NOT settled.
 
+**Amended (2026-09-06, Inflate, bl-22c5).** The maintainer attacked §2 claim 1:
+*"locally I will have a bunch of agents running with subagents, so balls is a
+multi-writer blast radius, even at the local scale. It's never single-writer."*
+Conceded. The premise was wrong AND unnecessary: the invariant that makes
+ff-only sufficient today is not "one writer" but "a rejected push un-seals, so
+the local store is never ahead of the remote by more than the in-flight op."
+§2 claim 1 and §3 are rewritten around the mechanism that replaces that
+invariant — a rebase of local seals — and §6 Q1/Q2 are closed by it. Everything
+else stands.
+
 ## 1. What exists, exactly (verified against `main` 93a0ab7f)
 
 - **One store per checkout**, a branch (`tasks_branch`, default `balls/tasks`).
@@ -48,11 +58,20 @@ The complaint is "fail-closed sync." The cause is not the fail-closed policy;
 it is **one store branch with many writers, published as a side effect of every
 op.** Split those two and the ladder falls out:
 
-1. **The personal store is single-writer.** Your `balls/tasks` on your own
-   remote (fork, or `origin` when you are the only writer, or stealth) is
-   written by you alone. E5 contention cannot occur there. The only remaining
-   push failure is transport, and transport failure on a backup is not a reason
-   to abort a local op — the work is not lost, it is *ahead*.
+1. **Every store is multi-writer; the question is only WHEN seals publish and
+   HOW divergence reconciles.** (Rewritten under bl-22c5.) On one box, N agents
+   seal into one local branch — already serialized by the §0 CAS commit point,
+   no remote involved. Across boxes (and cloud sessions) they publish to one
+   remote, so the remote branch has many publishers. Today that is safe only
+   because a rejected push un-seals: the local branch is never more than one
+   op ahead, so ff-only import always works and E5 is the retry signal. That
+   invariant is the real cost of fail-closed, and deferring publication breaks
+   it on purpose. What replaces it: **reconcile = fetch, rebase local seals
+   onto the remote tip, push.** Each seal is one commit touching one
+   `tasks/<id>.md`, so seals on different balls rebase clean by construction;
+   only a same-ball race can conflict. Transport failure is then a non-event
+   (the store is *ahead*, drift renders it), and E5 narrows to "this ball was
+   changed on both sides."
 2. **A shared store is a different store, reached across a boundary.** Work
    arrives there by a deliberate act (check-in), per ball, not by branch push.
 3. **Every tier boundary has the same shape**: a counterpart one tier up, a
@@ -86,11 +105,40 @@ fetch-ff, then push. This is not a new verb — `prime.post` already does exactl
 *"settle store content (fetch-ff + push)"* through the tracker. `sync` and
 `prime` are the same act at two moments.
 
-The only bl-tracker code change this design needs: **transport failure fails
-open** (warn on stderr, leave the store ahead), while **non-ff on an established
-remote stays E5**. On a single-writer branch a non-ff means someone else wrote
-your branch — a misconfiguration worth aborting on. That is the same line
-github-issues drew in bl-a95c, moved into the tracker.
+**One mechanism, two moments** (rewritten under bl-22c5). The tracker gains a
+single reconcile: `fetch`, then `rebase <remote>/<branch>` of every local seal
+not yet on the remote, then `push`. It is called from two places:
+
+- **Per-op `*.post`** (mandatory wiring): push; on a non-ff reject, reconcile
+  ONCE — there is exactly one local seal, the in-flight op's — and push again.
+  A clean rebase means the contention was on a *different* ball, which is the
+  common case with many agents, and the op lands with no human in the loop.
+  A rebase conflict means the SAME ball changed on both sides: abort the
+  rebase, un-seal, and E5 stands with a sharper sentence that names the ball.
+  §12's "deliberately NO pre-pull" argument survives intact — this is a
+  post-reject pull on the contended path only, no round-trip on the happy path.
+- **`bl sync`** (opt-in wiring, and prime): the same reconcile over N seals.
+  A conflict aborts the rebase, leaves every local seal local, and names the
+  ball; the drift line keeps showing `ahead` until the operator resolves it in
+  the store checkout — the recovery `bl sync --skill` already prescribes for
+  the crash-between-seal-and-push shape, now the ordinary conflict path too.
+
+Same-ball conflicts are semantically meaningful, and refusing is the right
+verdict in each: two claims of one ball (both add `claimant`) — the later
+loses, which IS claim contention; a close against a remote update
+(delete/modify) — a human decides whether the update mattered. No field-wise
+merge, no CRDT (§7).
+
+**Transport failure fails open** in both moments (warn on stderr, store stays
+ahead) — the line github-issues drew in bl-a95c, moved into the tracker. Only a
+same-ball conflict or a permissions reject remains fail-closed.
+
+**Occupancy may stay eager while content defers.** Two boxes claiming the same
+ball unknowingly is the one race deferral makes worse. The wiring is per hook,
+so `claim.post`/`unclaim.post` can keep the tracker while `create/update/close
+.post` drop it: claims publish now, everything else at `bl sync`. That is the
+"obnoxiousness level" the maintainer asked for, expressed as which hooks carry
+the plugin — still no mode, still no config value.
 
 **Drift render.** bl-tracker gains a read-op hook (`list`, `show` — the bl-0af4
 single-phase dispatch bl-delivery already uses for the `worktree` line) that
@@ -152,17 +200,16 @@ check-in on demand. The ladder is the schedule, again.
 
 ## 6. Not settled — the maintainer's attack wanted here
 
-1. **Is the personal tier really single-writer?** The reframe in §2 rests on it.
-   If two of the maintainer's own agents on two boxes share one personal
-   remote, E5 contention is back at tier 0 and "fail-open on transport" does
-   not cover it. Position: two boxes are two checkouts with two bindings; a
-   shared personal remote is a shared store and belongs at tier 1.
-2. **Does deferred publication need a merge, not an ff?** If the tracker leaves
-   `*.post` and a second writer does exist, `bl sync` meets divergence as the
-   NORMAL case and ff-only refuses forever. Position: keep ff-only and let the
-   answer to (1) make divergence a misconfiguration; if (1) falls, sync becomes
-   fetch + rebase-local-seals + push, refusing on same-ball conflict and naming
-   the ball.
+1. ~~Is the personal tier really single-writer?~~ **CLOSED by the maintainer
+   (2026-09-06): it is never single-writer.** Resolved by §2.1/§3 — the
+   rebase reconcile does not need the premise.
+2. ~~Does deferred publication need a merge, not an ff?~~ **CLOSED with (1):**
+   yes — a rebase of local seals, refusing on same-ball conflict and naming
+   the ball. Residue worth an attack: the rebase is of the STORE branch, whose
+   seals carry op-log metadata (seen-tokens, `updated` stamps). A rebased seal
+   keeps its content but gets a new sha — verify nothing downstream (the
+   seen-token that lets close refuse an unseen edit; the verdict cache keyed by
+   the merge queue) pins a seal by sha rather than by content.
 3. **Addressing a second store of the same project.** A store is keyed on the
    invocation directory; a shared `balls/team` branch of the SAME repo has no
    directory to be `-C`'d from. `bl sync [BRANCH]` already takes a branch name
@@ -177,6 +224,10 @@ check-in on demand. The ladder is the schedule, again.
    of the checkout, not a ball. `bl conf` already shows the resolved remote and
    branch. Position: `list` header, because `list` is the read every session
    starts with and `conf` is consulted only when something is wrong.
+6. **Should occupancy be eager by default in opt-in wiring?** §3 lets
+   `claim.post` keep the tracker while content defers. Position: yes, as the
+   seed's documented opt-in shape — the cost of a stale claim is a wasted
+   agent, the cost of a stale body is nothing.
 
 ## 7. What this does NOT solve, stated
 
@@ -189,8 +240,8 @@ check-in on demand. The ladder is the schedule, again.
 
 ## 8. Implementation balls (mint on convergence, not before)
 
-- bl-tracker: transport failure fails open; drift line on `list`/`show`.
-- `bl sync`: push after fetch-ff (tracker `sync.post`).
+- bl-tracker: the reconcile (fetch + rebase local seals + push), called once-on-reject from `*.post` and over N seals from `sync`; transport failure fails open; drift line on `list`/`show`.
+- Audit: nothing pins a store seal by sha (seen-tokens, verdict cache) — §6 Q2 residue.
 - Tag charset: admit `:` `/` `@` `#`.
 - `bl-upstream` plugin (sibling repo, like balls-github-plugin).
 - Seed comment in `[hooks]` documenting the opt-in wiring.

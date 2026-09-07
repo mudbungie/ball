@@ -18,7 +18,7 @@ One agent takes a task all the way through: `bl claim → work → bl close → 
 
 ## Installation
 
-Balls ships as a small Rust binary `bl` plus three sibling plugin binaries (`bl-tracker`, `bl-delivery`, and the opt-in `bl-chore`). The only runtime dependency is `git`.
+Balls ships as a small Rust binary `bl` plus four sibling binaries — `bl-tracker`, `bl-delivery`, the opt-in `bl-chore`, and `bl-speculate` (the verdict-cache edge the pre-commit gate consults). One crate builds all five, so their versions are equal by construction and `bl --version` names the set. The only runtime dependency is `git`.
 
 ### From source (recommended)
 
@@ -29,7 +29,7 @@ make install
 make hooks     # one-time per clone: install the repo-local pre-commit hook
 ```
 
-`make install` builds release binaries and installs four executables to `~/.local/bin/`: `bl` (core, plus a `balls` alias symlink), `bl-tracker`, `bl-delivery`, and `bl-chore`. Wiring is by name: the hook schedule (`config/plugins.toml`) lists plugin names, and `bl prime`/`bl install` bind each name to the binary of that name installed **beside `bl`** — a local, gitignored `config/plugins/bin/<name>` symlink that dispatch then resolves (§6). The seed wires `bl-tracker` and `bl-delivery`; `bl-chore` installs beside them but stays dormant until you schedule it (opt-in — see Plugins). A core-only install leaves `bl prime` founding a stealth, plugin-less task list: remotes and code worktrees silently never engage. Install the scheduled plugins beside `bl` and they wire themselves. Make sure `~/.local/bin` is on your `PATH`.
+`make install` builds release binaries and installs five executables to `~/.local/bin/`: `bl` (core, plus a `balls` alias symlink), `bl-tracker`, `bl-delivery`, `bl-chore`, and `bl-speculate`. Each is written to a temp name in the destination and `mv`d into place, never copied over the live path: `install`(1) opens the destination `O_TRUNC`, which fails `ETXTBSY` against a binary a fleet of agents is executing right now, and `rename`(2) in the same directory means every exec sees whole-old or whole-new. Wiring is by name: the hook schedule (`config/plugins.toml`) lists plugin names, and `bl prime`/`bl install` bind each name to the binary of that name installed **beside `bl`** — a local, gitignored `config/plugins/bin/<name>` symlink that dispatch then resolves (§6). The seed wires `bl-tracker` and `bl-delivery`; `bl-chore` installs beside them but stays dormant until you schedule it (opt-in — see Plugins). A core-only install leaves `bl prime` founding a stealth, plugin-less task list: remotes and code worktrees silently never engage. Install the scheduled plugins beside `bl` and they wire themselves. Make sure `~/.local/bin` is on your `PATH`.
 
 `make hooks` wires the repo-local pre-commit hook (clippy, 300-line cap, tests, 100% coverage, warning-clean rustdoc). Run it once per clone; it is not part of `make install` because a user installing the binary should not have hooks attached to whatever repo they happen to be in. The coverage check requires `cargo install cargo-tarpaulin`.
 
@@ -47,7 +47,19 @@ make uninstall
 cargo install balls
 ```
 
-`cargo install` places `bl` in `~/.cargo/bin/`. To get the plugins beside it, build and copy `bl-tracker`, `bl-delivery`, and `bl-chore` next to `bl` (or use the source install above).
+`cargo install` places all five binaries in `~/.cargo/bin/` — it installs every binary target of the package, so the plugins land beside `bl` already, which is the adjacency §6 dispatch resolves. Pass `--root ~/.local` to put them where the source install does instead.
+
+### Keeping this box current
+
+```bash
+make deploy-local
+```
+
+Seats a systemd **user** timer that reconciles this box's `bl` against crates.io hourly — the same shape the rest of the suite runs. It installs a small reconciler (`scripts/deploy/bl-update`) and two unit files; nothing is compiled at seating time and no machine, account or address is committed anywhere. The reconciler asks the sparse index for the newest **non-yanked** version, compares it with what `bl --version` says is on disk, and `cargo install`s the whole crate when they differ — so a yank is the rollback lever, and one install moves `bl` and every plugin together. It also re-checks the set on **every** tick, not only after an upgrade: a plugin beside `bl` that answers a different version is a set nobody built, and the install that repairs it is the same one.
+
+Two writers of one install path, and which one wins: `make install` writes exactly the paths the reconciler writes, so the box never holds two of any binary and no `PATH` order decides anything. A checkout build survives until the next tick and is then replaced by the release — the right way round for a CLI. A box that must keep a checkout build is one `systemctl --user disable bl-update.timer` away from doing so.
+
+`make deploy-status` prints what is installed, what the registry offers, and the timer state. `make deploy-selftest` drives the real reconciler under fake `curl`/`cargo` shims, both directions, and runs inside `make check`.
 
 ### Cross-compilation
 
@@ -62,12 +74,14 @@ cargo zigbuild --release --target aarch64-apple-darwin
 ### Verify
 
 ```bash
-bl --version
+bl --version               # e.g. bl 0.5.11 (plugins: bl-chore bl-delivery bl-speculate bl-tracker)
 cd your-repo
 bl prime --as you          # founds the substrate on first run
 bl create "My first task"
 bl list
 ```
+
+`bl --version` names the crate version and the plugin set this build ships with; each of those binaries answers `--version` for itself in the same two fields. No binary states another's version — asking each is how a box checks that its set is coherent, and it is what the reconciler above does.
 
 Balls is MIT licensed. See `LICENSE`.
 

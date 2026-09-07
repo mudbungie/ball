@@ -52,6 +52,12 @@ jobs:
       - name: line-length check
         run: bash scripts/check-line-lengths.sh
 
+      # The CD reconciler is shell: no compiler and no coverage gate reaches
+      # it, so its own selftest is what does (bl-4316). It drives the real
+      # scripts/deploy/bl-update under fake curl/cargo in a scratch HOME.
+      - name: deploy selftest
+        run: sh scripts/deploy/update-selftest.sh
+
       - name: coverage (100%)
         run: bash scripts/check-coverage.sh
 

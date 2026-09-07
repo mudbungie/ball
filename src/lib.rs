@@ -202,6 +202,7 @@ pub mod task;
 pub mod taskfile;
 pub mod tracker;
 pub mod verb;
+pub mod version;
 pub mod wire;
 
 /// The §8 dispatch entrypoint, re-exported as `balls::run` — the one symbol the

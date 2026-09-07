@@ -108,9 +108,12 @@ pub fn run(args: &[String], input: &mut impl Read, out: &mut impl Write, env: &E
 
 fn dispatch(args: &[String], input: &mut impl Read, out: &mut impl Write, env: &Env) -> io::Result<()> {
     match args.iter().map(String::as_str).collect::<Vec<_>>().as_slice() {
+        // Beside `protocol` — a question about the binary, not about an op. A
+        // sibling states its own version and no other's ([`crate::version`]).
+        ["--version" | "-V"] => writeln!(out, "{}", crate::version::plugin_line("bl-tracker")),
         ["protocol"] => protocol(out),
         [op, phase] => handle(op, phase, input, env),
-        _ => Err(io::Error::other("usage: tracker protocol | tracker <op> <phase>")),
+        _ => Err(io::Error::other("usage: tracker --version | tracker protocol | tracker <op> <phase>")),
     }
 }
 

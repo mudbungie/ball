@@ -559,6 +559,10 @@ running the binary by hand with the same argv.
   → stdout (JSON): { protocol: <version(s)>, ops: [...] }   # self-description; balls never persists it
   → exit 0
 
+<bin> --version                                             # or -V
+  → stdout: "<name> <version>"                              # the binary's own version, no other's
+  → exit 0
+
 <bin> <op> <phase>
   cwd:    the CHANGE worktree (mutating ops) or the relevant checkout (reads: store / landing)
   env:    BALLS_PROTOCOL=1, BALLS_PLUGIN_NAME=<name>, BALLS_PLUGIN_DEPTH=<n>
@@ -578,6 +582,17 @@ running the binary by hand with the same argv.
           additionally emits an `error` record (op/phase/name/exit) so the failure locus survives any
           `log_level` threshold (§4) even when the plugin's own info-level stderr is filtered out.
 ```
+
+**Adjacency is the wiring, so a version-mixed set is a real failure mode — and `--version` is what
+makes it visible** (bl-4316). Core resolves a scheduled name to *the binary of that name beside
+`bl`*, and it validates that binary's `protocol` self-describe, never its version: a `bl` at one
+version dispatching a sibling at another is wired, answers `protocol`, and is a set nobody built.
+So every binary answers `--version` with its OWN version and no other's, and `bl` additionally names
+the plugin set it was BUILT with (one crate builds all five, so the set and the version are both
+build facts). Asking each named binary is then the whole coherence check, and it is a composition
+by whoever asks — a box's reconciler, `make deploy-status` — not a new protocol op and not a
+capability any binary claims on another's behalf. `--version` is help OUTPUT like `bl --skill`: it
+is answered before any substrate is resolved, so it works on a checkout nothing has primed.
 
 **stdout's single-writer property is a DEFAULT-SCHEDULE guarantee, not a protocol invariant.** On
 the shipped schedule exactly one plugin per verb writes stdout (delivery on `claim`/`prime`/`show`;

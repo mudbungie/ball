@@ -48,6 +48,7 @@ pub fn directory() -> String {
     out.push_str("as if bl ran there), --log-level LEVEL.\n");
     out.push_str("Full usage for one command: bl <command> --skill (--help is an alias).\n");
     out.push_str("The operating guide (architecture + invariants): bl --skill.\n");
+    out.push_str("This build's version and the plugin set it ships with: bl --version.\n");
     out
 }
 
@@ -82,5 +83,6 @@ mod tests {
         let dir = directory();
         assert!(dir.contains("bl <command> --skill"), "points at per-command usage");
         assert!(dir.contains("bl --skill"), "points at the operating guide");
+        assert!(dir.contains("bl --version"), "points at the build's identity");
     }
 }

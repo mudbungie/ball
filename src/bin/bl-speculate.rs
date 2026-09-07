@@ -23,7 +23,7 @@ use std::path::{Path, PathBuf};
 use std::process::{exit, Command};
 
 use balls::layout::Xdg;
-use balls::{speculate, speculate_queue, speculate_run};
+use balls::{speculate, speculate_queue, speculate_run, version};
 
 const USAGE: &str = "usage: bl-speculate check | record pass|fail | enqueue ID | dequeue ID | queue \
 | run [--gate CMD] [--onto BRANCH] [--builds N] | import FILE...";
@@ -43,6 +43,12 @@ fn main() {
 /// Dispatch. `Ok(false)` is only ever a check miss; every other completion is
 /// `Ok(true)` or an error.
 fn run(args: &[String]) -> io::Result<bool> {
+    // Answered before the cwd is even read: `--version` is a question about
+    // the binary, and it must work from a directory that is not a repo.
+    if version::asked(args) {
+        println!("{}", version::plugin_line("bl-speculate"));
+        return Ok(true);
+    }
     let root = env::current_dir()?;
     match args.first().map(String::as_str) {
         Some("check") => {

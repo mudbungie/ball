@@ -1,0 +1,30 @@
+# The tracker-CLI reconciler, run by `bl-update.timer` (bl-4316). Oneshot: it
+# asks the registry what the newest live `balls` is, compares it with what
+# `bl --version` says is on disk, checks that every plugin beside `bl` answers
+# the same version, installs the crate when either reading disagrees, and
+# exits. It restarts nothing — `bl` is a program somebody runs to completion,
+# and the next invocation is the adoption.
+[Unit]
+Description=install the newest released balls (bl and its plugin set)
+Documentation=https://github.com/mudbungie/balls
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/bl-update
+# The `cargo install` build is the long pole and runs on this box's own cores.
+# `systemctl --user start` blocks on a oneshot, so this is also the ceiling on
+# how long `make deploy-local`'s own verification can sit — long enough for a
+# cold build, short enough that a wedged one does not hold out the next tick.
+TimeoutStartSec=30min
+# `cargo`, the `cc` a build shells to, the linker, and `bl` itself (the
+# reconciler asks the installed binaries for their versions).
+Environment=PATH=%h/.cargo/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+# **This box is somebody's workstation and a fleet of agents is working on it.**
+# A background build that makes the machine unpleasant to type on is worse than
+# a slow one: it gets the timer switched off, and a switched-off timer is no CD
+# at all.
+Nice=19
+IOSchedulingClass=idle
+CPUSchedulingPolicy=idle

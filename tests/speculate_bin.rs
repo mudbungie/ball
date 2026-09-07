@@ -143,3 +143,20 @@ fn territory_lands_under_the_plugin_namespace() {
     let body = fs::read_to_string(Path::new(&verdicts).join(&name)).unwrap();
     assert!(body.contains("builder = \"e2e\""), "builder identity is recorded: {body}");
 }
+
+#[test]
+fn the_version_line_names_this_binary_and_needs_no_repo() {
+    // A sibling states its OWN version (bl-4316), answered before the cwd is
+    // read — `bl-speculate` is reached from a hook, but the box's reconciler
+    // asks it from wherever it happens to be standing.
+    for spelling in ["--version", "-V"] {
+        let out = Command::cargo_bin("bl-speculate")
+            .unwrap()
+            .current_dir(std::env::temp_dir())
+            .arg(spelling)
+            .assert()
+            .success();
+        let spoken = String::from_utf8_lossy(&out.get_output().stdout).into_owned();
+        assert!(spoken.starts_with("bl-speculate "), "{spoken}");
+    }
+}

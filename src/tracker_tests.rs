@@ -34,6 +34,19 @@ fn protocol_self_describes_version_and_ops() {
 }
 
 #[test]
+fn the_version_arm_names_this_binary_and_its_crate_version() {
+    // A sibling states its OWN version and no other's: the set beside `bl` is
+    // checked by asking each binary, not by any one of them speaking for the
+    // rest (`scripts/deploy/bl-update` composes the readings).
+    let (_tmp, env) = env();
+    for spelling in ["--version", "-V"] {
+        let mut out = Vec::new();
+        assert_eq!(run(&[spelling.to_string()], &mut io::empty(), &mut out, &env), 0);
+        assert_eq!(String::from_utf8(out).unwrap().trim(), crate::version::plugin_line("bl-tracker"));
+    }
+}
+
+#[test]
 fn an_unrecognized_invocation_is_a_usage_error() {
     let (_tmp, env) = env();
     assert_eq!(run(&[], &mut io::empty(), &mut io::sink(), &env), 1);

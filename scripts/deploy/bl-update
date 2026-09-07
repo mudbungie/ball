@@ -1,0 +1,156 @@
+#!/bin/sh
+# Reconcile this box's `bl` and its sibling plugin binaries against the
+# registry (bl-4316) — the CD half of `make deploy-local`. Run by
+# `bl-update.timer`; safe to run by hand.
+# `scripts/deploy/update-selftest.sh` drives THIS file under fake `curl`/`cargo`
+# shims and is what `make deploy-selftest` runs.
+#
+# **Why the tracker needs this at all.** `bl` is the tool every agent on the
+# box touches most, and it was the last standalone binary with no channel: it
+# was installed by hand from a checkout, and until bl-4316 it answered no
+# `--version`, so "is this box's bl stale" was not a question the box could
+# ask. Everything else in the suite already answered it.
+#
+# **Nothing to restart, so there is no second half.** An engine defers a
+# restart to its control boundary and a foot to an executing invocation; `bl`
+# is a program somebody runs to completion. `cargo install` replaces each file
+# by rename, so an op already running keeps its own inode and the NEXT
+# invocation is the new one. No unit, no quiescence to read, no deferral.
+#
+# **Nothing here is stored.** "Which version is installed" is each binary's own
+# `--version`; "which is newest" is the registry's answer. There is no state
+# file to drift and nothing to reconcile if somebody installs by hand.
+#
+# ---------------------------------------------------------------------------
+# FIVE BINARIES, ONE VERSION, AND EVERY ONE OF THEM IS ASKED.
+#
+# One crate builds `bl` plus four sibling plugins, and §6 dispatch resolves a
+# plugin by ADJACENCY — the binary of that name beside `bl`. So a box holding
+# `bl` at one version beside a plugin at another is holding a set nobody built,
+# and a version comparison on `bl` alone cannot see it. `bl --version` names
+# the set it shipped with; each named binary answers for itself; this file
+# composes the readings. No binary states another's version, so there is one
+# home per fact and nothing to go stale.
+#
+# The consequence is that the coherence arm runs on EVERY tick, not only after
+# an upgrade — an unmoved `bl` beside a hand-installed older plugin is exactly
+# the state that reads as healthy and is not. The repair is the same single
+# `cargo install`, because the set is one crate.
+# ---------------------------------------------------------------------------
+#
+# ---------------------------------------------------------------------------
+# TWO WRITERS OF ONE INSTALL PATH, AND WHICH ONE WINS.
+#
+# A dev box also builds from a checkout, so `make install` writes these same
+# paths. This file therefore writes EXACTLY the paths `make install` writes —
+# `$HOME/.local/bin` (the Makefile's `PREFIX` default) — so the box never holds
+# two of any binary and no PATH order decides which one an agent gets. The rule
+# is last-writer-wins and it is observable in one gesture: `bl --version`.
+#
+# A checkout build therefore survives until the next tick and is then replaced
+# by the release, which is the right way round for a CLI: a working tree's
+# binary is for the moment you are testing it, and a box that is not being
+# worked on should be running what shipped. A box that must hold a checkout
+# build is one `systemctl --user disable bl-update.timer` away from doing so.
+# ---------------------------------------------------------------------------
+#
+# **One known transient, with a named exit.** A binary that exists but answers
+# no `--version` reads here as the empty string — the same answer as absent —
+# so a box still holding a release older than bl-4316 reinstalls on every tick
+# until a release that states its version is the newest one. That is loud
+# rather than wrong, it self-clears on the first such release, and the
+# alternative (remembering that we already tried) would be the one stored fact
+# this file does not have.
+set -eu
+
+CRATE=balls
+# The sparse index — the same source `cargo install` resolves from, so the two
+# can never disagree about what exists. Names of five characters live under
+# `<first two>/<next two>/<name>`.
+INDEX_URL="https://index.crates.io/ba/ll/$CRATE"
+
+# The install root: the Makefile's `PREFIX` default, above.
+ROOT="$HOME/.local"
+BIN="$ROOT/bin/bl"
+
+say() { printf '%s: %s\n' bl-update "$*"; }
+die() { say "$*" >&2; exit 1; }
+
+# The newest version the registry will serve. **Yanked releases are filtered
+# HERE rather than left to cargo, and that is what makes a yank the rollback
+# lever**: yank a bad release and the next tick resolves the previous one, sees
+# it differ from what is installed, and puts it back — with nobody logging in.
+# `cargo install` alone cannot do this, because it refuses to go backwards;
+# that is why the install below passes an explicit `--version` and `--force`
+# rather than a bare crate name.
+#
+# **The fetch is a separate statement from the parse, deliberately.** As one
+# pipeline the exit status would be `tail`'s, so a registry answering 503 would
+# parse to an empty string and look like an empty index — two different
+# failures reported as one, and the wrong one. Read it, then judge it.
+latest_live() {
+    _index=$(curl -fsS --max-time 60 "$INDEX_URL") \
+        || die 'cannot reach the registry index'
+    printf '%s\n' "$_index" | while IFS= read -r _line; do
+        # One JSON object per line. Read it with parameter expansion rather
+        # than a regex: `"vers"` occurs exactly once per line (a dependency
+        # entry carries `"req"`, never `"vers"`), so there is nothing for a
+        # greedy match to run past.
+        case $_line in
+            *'"yanked":false'*) ;;
+            *) continue ;;
+        esac
+        _v=${_line#*'"vers":"'}
+        _v=${_v%%'"'*}
+        [ -n "$_v" ] && printf '%s\n' "$_v"
+    done | sort -V | tail -1
+}
+
+# What is on disk, for any of the five. Asking the binary is the one authority:
+# cargo's bookkeeping can disagree with the file after a hand install, and the
+# file is what an agent will run. Absent — or too old to speak — is the empty
+# string, which is a lawful answer meaning "not known to be current".
+version_of() { # <path>
+    [ -x "$1" ] || return 0
+    "$1" --version 2>/dev/null | awk 'NR==1 {print $2}'
+}
+
+# The plugin set THIS bl shipped with, off its own `--version` line:
+#   bl 0.5.11 (plugins: bl-chore bl-delivery bl-speculate bl-tracker)
+# A line without the parenthesised half is a bl too old to state one — a lawful
+# answer meaning "no set to check", and the transient above covers it.
+plugins_of() { # <bl-path>
+    "$1" --version 2>/dev/null \
+        | awk 'NR==1 && $3 == "(plugins:" { for (i = 4; i <= NF; i++) { sub(/\)$/, "", $i); print $i } }'
+}
+
+# The first sibling beside `bl` whose version disagrees with `bl`'s, if any —
+# the set-coherence read. Prints `<name> <version-or-absent>`; silence means
+# the whole set answers one version.
+incoherent() { # <bl-path> <version>
+    plugins_of "$1" | while IFS= read -r _p; do
+        _v=$(version_of "$(dirname -- "$1")/$_p")
+        [ "$_v" = "$2" ] || { printf '%s %s\n' "$_p" "${_v:-absent}"; break; }
+    done
+}
+
+want=$(latest_live)
+[ -n "$want" ] || die 'the registry index named no live version'
+have=$(version_of "$BIN")
+stray=$(incoherent "$BIN" "$have")
+
+if [ "$want" = "$have" ] && [ -z "$stray" ]; then
+    say "installed $have is current, with its plugin set"
+    exit 0
+fi
+
+if [ -n "$stray" ]; then
+    say "the set is incoherent: bl ${have:-absent} beside $stray"
+fi
+say "installing $want (was ${have:-absent})"
+# `--locked` builds against the lockfile the crate publishes, the parity check
+# that it resolves as released; `--force` because the move may be a DOWNGRADE
+# (the yank lever above). No `--bin`: installing every binary target of the
+# package IS the set, in one act.
+cargo install "$CRATE" --locked --version "$want" --force --root "$ROOT"
+say "installed $(version_of "$BIN"); the next invocation runs it"

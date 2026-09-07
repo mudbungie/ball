@@ -5,7 +5,7 @@
 #   1. Has clippy warnings or compiler warnings
 #   2. Contains a Rust source file >= 300 lines
 #   3. Has failing tests
-#   4. Drops line coverage below 100%
+#   4. Drops line coverage below 100%, or breaks the deploy reconciler
 #   5. Has any rustdoc warning — a broken intra-doc link included
 #
 # To install: scripts/install-hooks.sh
@@ -45,6 +45,12 @@ make doc
 
 echo "pre-commit: line lengths..."
 "$ROOT/scripts/check-line-lengths.sh"
+
+# The deploy reconciler is shell, so no compiler and no coverage gate reaches
+# it; its own selftest is what does (bl-4316). Sub-second, and it runs the real
+# `scripts/deploy/bl-update` under fake curl/cargo in a scratch HOME.
+echo "pre-commit: deploy selftest..."
+"$ROOT/scripts/deploy/update-selftest.sh" >/dev/null
 
 echo "pre-commit: tests..."
 cargo test --quiet 2>&1

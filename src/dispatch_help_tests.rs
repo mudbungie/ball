@@ -26,6 +26,19 @@ fn the_skill_subcommand_carries_a_deprecation_note() {
 }
 
 #[test]
+fn the_version_line_prints_pre_substrate_for_both_spellings() {
+    // `--version`/`-V` is a question about the BINARY, so like the help
+    // affordances it answers on a directory with no landing at all — which is
+    // the whole reason a reconciler can ask it on a box holding no checkout.
+    for a in [&["--version"][..], &["-V"]] {
+        assert_eq!(run_in(&TempDir::new().unwrap(), a), 0);
+    }
+    let line = crate::version::line();
+    assert!(line.starts_with("bl "), "names the binary first: {line}");
+    assert!(line.contains("bl-delivery"), "names the plugin set built with: {line}");
+}
+
+#[test]
 fn help_prints_the_directory_and_exits_zero() {
     // `help` (and its conventional `--help`/`-h` aliases) is a pre-verb help
     // affordance like `skill`: no landing, not a Verb, works anywhere.

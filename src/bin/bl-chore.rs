@@ -16,10 +16,17 @@ use std::env;
 use std::io::{self, Read};
 use std::process::exit;
 
-use balls::chore;
+use balls::{chore, version};
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
+    // `--version` sits beside `protocol`: both are questions ABOUT the binary,
+    // answered before any wire is read. A sibling states its own version and
+    // no other's (`balls::version`), so the set beside `bl` is checkable.
+    if version::asked(&args) {
+        println!("{}", version::plugin_line("bl-chore"));
+        return;
+    }
     if args.first().map(String::as_str) == Some("protocol") {
         println!("{}", chore::PROTOCOL_JSON);
         return;

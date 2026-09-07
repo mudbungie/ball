@@ -7,7 +7,7 @@
 
 use crate::edge::Edge;
 use crate::verb::Verb;
-use crate::{checkout, conf, help, import, install, mutate, reads, skill};
+use crate::{checkout, conf, help, import, install, mutate, reads, skill, version};
 
 /// Appended to `bl skill`'s output (the bare subcommand spelling only): the
 /// subcommand form is on a deprecation path in favor of the flag form `bl
@@ -25,7 +25,8 @@ Note: `bl skill` is on a DEPRECATION PATH. Use `bl --skill` for this guide, and\
 /// seals its path-copy onto the landing or store via [`install::run`].
 /// `--skill`/`skill` print the top-level operating guide ([`skill::top`]) and
 /// `bl <cmd> --skill`/`--help` a command's full doc ([`skill::command`]); `help`
-/// (also `--help`/`-h`) prints the terse command directory ([`help::directory`]).
+/// (also `--help`/`-h`) prints the terse command directory ([`help::directory`]);
+/// `--version`/`-V` prints this build's identity ([`version::line`]).
 /// `edge` carries the host inputs `main` resolved.
 ///
 /// Returns the process exit code: `0` on success (including `skill`/`help`), `1`
@@ -52,6 +53,14 @@ pub fn run(edge: &Edge, args: &[String]) -> i32 {
     // 0. `--skill` is the canonical spelling (symmetric with `bl <cmd> --skill`);
     // the `skill` subcommand is kept but deprecated (a trailing note). A known
     // command after either spelling gets ITS full doc; bare gets the top guide.
+    // `--version`/`-V` sits with them: what this binary IS, answered before any
+    // substrate is resolved (a box asking whether its `bl` is stale must get an
+    // answer from a checkout it has never primed). It names the plugin set it
+    // was built with; each of those binaries answers for itself ([`version`]).
+    if version::asked(&rest) {
+        println!("{}", version::line());
+        return 0;
+    }
     match rest.first().map(String::as_str) {
         Some("--skill") => {
             match rest.get(1).map(String::as_str).and_then(Verb::parse) {

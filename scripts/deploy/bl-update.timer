@@ -1,0 +1,28 @@
+# When to look for a new balls release (bl-4316). Hourly is well inside any
+# useful latency for a release and far below the registry's rate limits; the
+# tick is cheap when nothing changed (one small index fetch and five
+# `--version` reads).
+[Unit]
+Description=hourly check for a new balls release
+Documentation=https://github.com/mudbungie/balls
+
+[Timer]
+# **A user timer, and deliberately no lingering.** A server's unit must outlive
+# a logout and its deployment enables `loginctl enable-linger` for that; `bl` is
+# reached at a prompt by somebody (or some agent) already logged in, so the user
+# manager exists exactly when the binary is used, and keeping one alive for a
+# timer whose product only matters at the next invocation is a running process
+# bought for nothing.
+#
+# `Persistent=true` is what makes that sound rather than lossy: a tick missed
+# while the box was off or logged out runs ONCE on the next login, so the
+# reconcile happens before the operator has finished opening a terminal.
+OnStartupSec=3min
+OnUnitActiveSec=1h
+Persistent=true
+# Nothing depends on the minute, and a build starting the instant somebody logs
+# in is the worst moment for it. Let systemd spread it.
+RandomizedDelaySec=5min
+
+[Install]
+WantedBy=timers.target

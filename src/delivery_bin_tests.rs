@@ -60,6 +60,24 @@ fn protocol_answers_on_out_and_needs_no_env() {
 }
 
 #[test]
+fn the_version_arm_answers_on_out_and_needs_no_env_either() {
+    // Same standing as `protocol`: a question about the binary, answered with
+    // no wire and no plugin name. A sibling states its own version and no
+    // other's, which is what makes the set beside `bl` checkable.
+    let tmp = TempDir::new().unwrap();
+    let env = Env {
+        plugin: None,
+        xdg: Xdg::with(Path::new("/nonexistent-home"), None, None),
+        cwd: tmp.path().to_path_buf(),
+    };
+    for spelling in ["--version", "-V"] {
+        let (code, out) = drive(&[spelling], "", &env);
+        assert_eq!(code, 0);
+        assert_eq!(out, format!("{}\n", version::plugin_line("bl-delivery")));
+    }
+}
+
+#[test]
 fn missing_op_or_phase_is_a_usage_error() {
     let tmp = TempDir::new().unwrap();
     let env = env_at(tmp.path(), tmp.path());

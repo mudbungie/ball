@@ -112,6 +112,12 @@ Run `bl help` for the terse one-line directory. Full usage for any command is
 - **Checkout lifecycle** — act on this checkout, not a ball:
   `prime` · `sync` · `install` · `conf`
 
+`bl --version` answers what this binary IS — the crate version and the four
+sibling plugin binaries it was built with — before any substrate is resolved, so
+it works on a checkout nothing has primed. Each named binary answers `--version`
+for itself in the same two fields; no binary states another's version, so asking
+each is how a box checks that its balls install is one coherent set.
+
 ## How the pieces relate
 
 - **Tasks gate each other** through blocker edges (`--needs` / `--blocks` /

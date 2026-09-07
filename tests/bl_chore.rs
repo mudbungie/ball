@@ -55,3 +55,19 @@ fn a_malformed_wire_aborts_the_claim() {
         .failure()
         .stderr(contains("bl-chore:"));
 }
+
+#[test]
+fn the_version_line_names_this_binary_and_needs_no_wire() {
+    // A sibling states its OWN version (bl-4316): `bl --version` names the
+    // plugin set it was built with, and each named binary answers for itself,
+    // so a box can check its whole balls install without any binary speaking
+    // for another. Answered before argv means anything — no op, no stdin.
+    for spelling in ["--version", "-V"] {
+        Command::cargo_bin("bl-chore")
+            .unwrap()
+            .arg(spelling)
+            .assert()
+            .success()
+            .stdout(contains("bl-chore "));
+    }
+}

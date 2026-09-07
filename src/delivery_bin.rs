@@ -24,6 +24,7 @@ use crate::delivery_precondition::{precondition_unmet, require_repo};
 use crate::delivery_repo::Project;
 use crate::delivery_wire::Wire;
 use crate::layout::Xdg;
+use crate::version;
 
 /// The host-resolved inputs one `bl-delivery` invocation needs, read once at
 /// the caller's process boundary (bl-bfa8: no env reads in the lib).
@@ -40,11 +41,18 @@ pub struct Env {
     pub cwd: PathBuf,
 }
 
-/// The delivery-plugin entrypoint: answer `protocol` on `out`, else run the
+/// The delivery-plugin entrypoint: answer `--version`/`protocol` on `out`, else run the
 /// `<op> <phase>` hook with the §7 wire read from `input`, returning the
 /// process exit code. A hook error is printed to stderr in the plugin's voice
 /// (`bl-delivery: …`) and becomes exit `1` — the §6 "non-zero aborts the op".
 pub fn run(args: &[String], input: &mut impl Read, out: &mut impl Write, env: &Env) -> i32 {
+    // Beside `protocol`: both are questions about the BINARY, answered with no
+    // wire read and no env. A sibling states its own version and no other's
+    // ([`crate::version`]), which is what makes the set beside `bl` checkable.
+    if version::asked(args) {
+        let _ = writeln!(out, "{}", version::plugin_line("bl-delivery"));
+        return 0;
+    }
     if args.first().map(String::as_str) == Some("protocol") {
         let _ = writeln!(out, "{}", delivery::PROTOCOL_JSON);
         return 0;
